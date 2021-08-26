@@ -46,7 +46,3 @@
     - Card number: 5105105105105100
     - Expires end: 09/23
     - cvc/cvv: 510
-
-- Для баз данных используются стандартные порты 5432 и 27017. Если они заняты, нужно остановить соответствующие сервисы:
-  - `sudo service postgresql stop`
-  - `sudo service mongodb stop`
