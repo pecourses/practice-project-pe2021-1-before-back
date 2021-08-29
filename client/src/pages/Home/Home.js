@@ -257,6 +257,17 @@ const Home = props => {
                 carouselType={carouselConstants.FEEDBACK_SLIDER}
               />
             </div>
+            <div className={styles.startContestContainer}>
+              <span>
+                Ready to get started? Launch a contest and start receiving
+                submissions instantly.
+              </span>
+              <Link to='/startContest'>
+                <span>
+                  <i class='far fa-lightbulb'></i> Start A Contest
+                </span>
+              </Link>
+            </div>
           </div>
           <Footer />
         </>
