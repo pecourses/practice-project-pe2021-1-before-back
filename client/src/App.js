@@ -17,6 +17,7 @@ import CONSTANTS from './constants';
 import browserHistory from './browserHistory';
 import ChatContainer from './components/Chat/ChatComponents/ChatContainer/ChatContainer';
 import { withNotAuth, withAuth } from './components/HOCs';
+import PricingPage from './pages/PricingPage';
 
 class App extends Component {
   render () {
@@ -74,6 +75,7 @@ class App extends Component {
           <Route exact path='/dashboard' component={withAuth(Dashboard)} />
           <Route exact path='/contest/:id' component={withAuth(ContestPage)} />
           <Route exact path='/account' component={withAuth(UserProfile)} />
+          <Route exact path='/pricing' component={PricingPage} />
           <Route component={NotFound} />
         </Switch>
         <ChatContainer />
