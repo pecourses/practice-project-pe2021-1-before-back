@@ -6,12 +6,12 @@ function FaqArticlesList () {
   return (
     <div className={styles.articlesMainContainer}>
       {faqs.map((col, i) => (
-        <div className={styles.ColumnContainer}>
+        <div key={i} className={styles.ColumnContainer}>
           {col.map((articles, j) => (
-            <>
+            <div key={j}>
               <div className={styles.headerArticle}>{articles.header}</div>
               <div className={styles.article}>{articles.body}</div>
-            </>
+            </div>
           ))}
           {i === 1 && (
             <>
