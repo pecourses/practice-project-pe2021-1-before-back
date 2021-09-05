@@ -1,0 +1,54 @@
+.articlesList
+  max-width: 1140px
+  width: 100%
+  display: flex
+  justify-content: space-between
+
+.pricesListItem
+  width: 20%
+
+.header
+  border-style: solid
+  border-width: 5px
+  padding: 10px
+  
+  h3
+    font-size: 24px
+  
+  p
+    padding: 10px 0
+
+  div
+    text-align: right
+
+.optionsList
+  position: relative
+  li 
+    padding: 10px 0
+    border-bottom: 2px solid grey
+
+  li::after
+    content: attr(data-tooltip)
+    position: absolute
+    left: 100%
+    transform: translateY(-50%)
+    box-shadow: 0px 2px 5px grey
+    padding: 20px
+    background: white
+    opacity: 0
+    z-index: 99
+    transition: 1s
+
+  li:hover::after
+    opacity: 1
+
+  li:last-child
+    border-bottom: none
+
+.startLink
+  display: block
+  width: 100%
+  padding: 10px
+  text-align: center
+  text-decoration: none
+  color: white
