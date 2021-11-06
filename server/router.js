@@ -1,14 +1,17 @@
 const express = require('express');
-const basicMiddlewares = require('../middlewares/basicMiddlewares');
-const hashPass = require('../middlewares/hashPassMiddle');
-const userController = require('../controllers/userController');
-const contestController = require('../controllers/contestController');
-const checkToken = require('../middlewares/checkToken');
-const validators = require('../middlewares/validators');
-const chatController = require('../controllers/chatController');
-const upload = require('../utils/fileUpload');
+const basicMiddlewares = require('./middlewares/basicMiddlewares');
+const hashPass = require('./middlewares/hashPassMiddle');
+const userController = require('./controllers/userController');
+const contestController = require('./controllers/contestController');
+const checkToken = require('./middlewares/checkToken');
+const validators = require('./middlewares/validators');
+const chatController = require('./controllers/chatController');
+const upload = require('./utils/fileUpload');
+const contestRouter = require('./routes/contestRouter');
+
 const router = express.Router();
 
+// authRouter
 router.post(
   '/registration',
   validators.validateRegistrationData,
@@ -18,12 +21,26 @@ router.post(
 
 router.post('/login', validators.validateLogin, userController.login);
 
+// contestRouter
+router.use('/contests', contestRouter);
+
+// userRouter
+router.post('/getUser', checkToken.checkAuth);
+
 router.post(
-  '/dataForContest',
+  '/changeMark',
   checkToken.checkToken,
-  contestController.dataForContest
+  basicMiddlewares.onlyForCustomer,
+  userController.changeMark
 );
 
+router.post(
+  '/updateUser',
+  checkToken.checkToken,
+  upload.uploadAvatar,
+  userController.updateUser
+);
+//---------------------------------------------------------------
 router.post(
   '/pay',
   checkToken.checkToken,
@@ -34,39 +51,10 @@ router.post(
   userController.payment
 );
 
-router.post(
-  '/getCustomersContests',
-  checkToken.checkToken,
-  contestController.getCustomersContests
-);
-
-router.get(
-  '/getContestById',
-  checkToken.checkToken,
-  basicMiddlewares.canGetContest,
-  contestController.getContestById
-);
-
-router.post(
-  '/getAllContests',
-  checkToken.checkToken,
-  basicMiddlewares.onlyForCreative,
-  contestController.getContests
-);
-
-router.post('/getUser', checkToken.checkAuth);
-
 router.get(
   '/downloadFile/:fileName',
   checkToken.checkToken,
   contestController.downloadFile
-);
-
-router.post(
-  '/updateContest',
-  checkToken.checkToken,
-  upload.updateContestFile,
-  contestController.updateContest
 );
 
 router.post(
@@ -82,20 +70,6 @@ router.post(
   checkToken.checkToken,
   basicMiddlewares.onlyForCustomerWhoCreateContest,
   contestController.setOfferStatus
-);
-
-router.post(
-  '/changeMark',
-  checkToken.checkToken,
-  basicMiddlewares.onlyForCustomer,
-  userController.changeMark
-);
-
-router.post(
-  '/updateUser',
-  checkToken.checkToken,
-  upload.uploadAvatar,
-  userController.updateUser
 );
 
 router.post(
