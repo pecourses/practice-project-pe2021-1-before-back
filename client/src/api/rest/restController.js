@@ -28,8 +28,10 @@ export const changeCatalogName = data => http.post('updateNameCatalog', data);
 // Contests
 export const dataForContest = data =>
   http.post('/contests/dataForContest', data);
+
 // export const updateContest = data => http.patch(`/contests/${data???id}`, data);
 export const updateContest = data => http.post('/contests/updateContest', data);
+
 // npm:query-string
 export const getCustomersContests = data =>
   http.get(
@@ -54,10 +56,13 @@ export const getActiveContests = ({
     awardSort,
     ownEntries,
   });
-// Отрефакторить
-export const getContestById = data =>
-  http.get('/contests/getContestById', {
-    headers: {
-      contestId: data.contestId,
-    },
-  });
+
+// Параметры строки запроса:
+// `/contests?limit=${data.limit}` => '/contests'        => req.query.limit
+
+// Параметры маршрута:
+// `/contests/${data.limit}`       => '/contests/:limit' => req.params.limit
+
+// Отрефакторить (использовать params - параметры маршрута)
+export const getContestById = ({ contestId }) =>
+  http.get(`/contests/${contestId}`);
