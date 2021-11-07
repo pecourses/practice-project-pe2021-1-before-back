@@ -8,8 +8,14 @@ const validators = require('./middlewares/validators');
 const chatController = require('./controllers/chatController');
 const upload = require('./utils/fileUpload');
 const contestRouter = require('./routes/contestRouter');
+const offerController = require('./controllers/offerController');
 
 const router = express.Router();
+
+// Получить данные об офферах: текст и статус (публичный end-point)
+// маршрут + контроллер + тест offer.http + тестовые данные
+
+router.get('/offers', offerController.getOffers);
 
 // authRouter
 router.post(
