@@ -1,9 +1,9 @@
 {
   "development": {
     "username": "postgres",
-    "password": "admin",
+    "password": "password",
     "database": "squadhelp-pe2021-1-dev",
-    "host": "localhost",
+    "host": "db-dev",
     "dialect": "postgres",
     "operatorsAliases": "Op"
   },
