@@ -1,4 +1,5 @@
 import http from '../interceptor';
+import queryString from 'query-string';
 
 export const registerRequest = data => http.post('registration', data);
 export const loginRequest = data => http.post('login', data);
@@ -35,27 +36,12 @@ export const updateContest = data => http.post('/contests/updateContest', data);
 // npm:query-string
 export const getCustomersContests = data =>
   http.get(
-    `/contests?limit=${data.limit}&offset=${data.offset}&status=${data.contestStatus}`
+    `/contests/customers?limit=${data.limit}&offset=${data.offset}&status=${data.contestStatus}`
   );
 
-export const getActiveContests = ({
-  offset,
-  limit,
-  typeIndex,
-  contestId,
-  industry,
-  awardSort,
-  ownEntries,
-}) =>
-  http.post('/contests/getAllContests', {
-    offset,
-    limit,
-    typeIndex,
-    contestId,
-    industry,
-    awardSort,
-    ownEntries,
-  });
+//offset=${offset}&...
+export const getActiveContests = data =>
+  http.get(`/contests?${queryString.stringify(data)}`);
 
 // Параметры строки запроса:
 // `/contests?limit=${data.limit}` => '/contests'        => req.query.limit
@@ -66,3 +52,13 @@ export const getActiveContests = ({
 // Отрефакторить (использовать params - параметры маршрута)
 export const getContestById = ({ contestId }) =>
   http.get(`/contests/${contestId}`);
+
+const transactions = [
+  { id: 1, date: '2021-08-31', operationType: 'INCOME', amount: 10 },
+  { id: 2, date: '2021-09-01', operationType: 'INCOME', amount: 20 },
+  { id: 3, date: '2021-09-04', operationType: 'INCOME', amount: 40 },
+];
+
+export const getTransactions = () =>
+  Promise.resolve({ data: [...transactions] });
+// http.get('/users/userId/transactions');

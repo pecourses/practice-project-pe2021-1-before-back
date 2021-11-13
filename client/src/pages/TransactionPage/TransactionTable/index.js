@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { format } from 'date-fns';
 
-export const TransactionTable = props => {
+const TransactionTable = props => {
   const { transactions } = props;
+
   return (
     <table>
       <caption> Transaction Table</caption>
@@ -16,7 +18,7 @@ export const TransactionTable = props => {
       <tbody>
         {transactions.map(({ id, date, operationType, amount }) => (
           <tr key={id}>
-            <td>{date}</td>
+            <td>{format(new Date(date), 'yyyy-MM-dd')}</td>
             <td>{operationType}</td>
             <td>{amount}</td>
           </tr>
