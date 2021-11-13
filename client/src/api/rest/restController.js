@@ -61,4 +61,3 @@ const transactions = [
 
 export const getTransactions = () =>
   Promise.resolve({ data: [...transactions] });
-// http.get('/users/userId/transactions');

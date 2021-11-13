@@ -43,7 +43,7 @@ fs.readdirSync(__dirname)
 //   }
 // });
 
-db.Transactions.associate();
+db.Transactions.associate(db);
 db['Contests'].belongsTo(db['Users'], {
   foreignKey: 'userId',
   sourceKey: 'id',

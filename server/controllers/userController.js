@@ -8,6 +8,7 @@ const controller = require('../socketInit');
 const userQueries = require('./queries/userQueries');
 const bankQueries = require('./queries/bankQueries');
 const ratingQueries = require('./queries/ratingQueries');
+const { TRANSACTION_OPERATION_TYPES } = require('../constants');
 
 module.exports.login = async (req, res, next) => {
   try {
@@ -125,19 +126,20 @@ module.exports.payment = async (req, res, next) => {
   let transaction;
   try {
     transaction = await bd.sequelize.transaction();
+
     await bankQueries.updateBankBalance(
       {
         balance: bd.sequelize.literal(`
-                CASE
-            WHEN "cardNumber"='${req.body.number.replace(
-              / /g,
-              ''
-            )}' AND "cvc"='${req.body.cvc}' AND "expiry"='${req.body.expiry}'
+          CASE
+            WHEN "cardNumber"='${req.body.number.replace(/ /g, '')}' 
+              AND "cvc"='${req.body.cvc}' 
+              AND "expiry"='${req.body.expiry}'
                 THEN "balance"-${req.body.price}
-            WHEN "cardNumber"='${CONSTANTS.SQUADHELP_BANK_NUMBER}' AND "cvc"='${
-          CONSTANTS.SQUADHELP_BANK_CVC
-        }' AND "expiry"='${CONSTANTS.SQUADHELP_BANK_EXPIRY}'
-                THEN "balance"+${req.body.price} END
+            WHEN "cardNumber"='${CONSTANTS.SQUADHELP_BANK_NUMBER}' 
+              AND "cvc"='${CONSTANTS.SQUADHELP_BANK_CVC}' 
+              AND "expiry"='${CONSTANTS.SQUADHELP_BANK_EXPIRY}'
+                THEN "balance"+${req.body.price} 
+          END
         `),
       },
       {
@@ -150,7 +152,9 @@ module.exports.payment = async (req, res, next) => {
       },
       transaction
     );
+
     const orderId = uuid();
+
     req.body.contests.forEach((contest, index) => {
       const prize =
         index === req.body.contests.length - 1
@@ -165,7 +169,18 @@ module.exports.payment = async (req, res, next) => {
         prize,
       });
     });
-    await bd.Contests.bulkCreate(req.body.contests, transaction);
+    await bd.Contests.bulkCreate(req.body.contests, { transaction });
+
+    // Внести инфо в табл Transactions о том, что потрачено price денег
+
+    const newTransaction = {
+      operationType: TRANSACTION_OPERATION_TYPES.EXPENSE,
+      amount: req.body.price,
+      userId: req.tokenData.userId,
+    };
+
+    await bd.Transactions.create(newTransaction, { transaction });
+
     transaction.commit();
     res.send();
   } catch (err) {
