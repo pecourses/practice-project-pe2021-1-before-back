@@ -3,6 +3,7 @@ const NotFound = require('../errors/UserNotFoundError');
 const RightsError = require('../errors/RightsError');
 const ServerError = require('../errors/ServerError');
 const CONSTANTS = require('../constants');
+const { mapStringToValues } = require('../utils/functions');
 
 module.exports.parseBody = (req, res, next) => {
   req.body.contests = JSON.parse(req.body.contests);
@@ -119,4 +120,14 @@ module.exports.canUpdateContest = async (req, res, next) => {
   } catch (e) {
     next(new ServerError());
   }
+};
+
+module.exports.parseQuery = (req, res, next) => {
+  const { query } = req;
+
+  Object.keys(query).forEach(key => {
+    req.query[key] = mapStringToValues(query[key]);
+  });
+
+  next();
 };
