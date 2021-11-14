@@ -16,9 +16,9 @@ const TransactionTable = props => {
         </tr>
       </thead>
       <tbody>
-        {transactions.map(({ id, date, operationType, amount }) => (
+        {transactions.map(({ id, createdAt, operationType, amount }) => (
           <tr key={id}>
-            <td>{format(new Date(date), 'yyyy-MM-dd')}</td>
+            <td>{format(new Date(createdAt), 'yyyy-MM-dd')}</td>
             <td>{operationType}</td>
             <td>{amount}</td>
           </tr>
