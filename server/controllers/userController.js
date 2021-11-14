@@ -9,6 +9,7 @@ const userQueries = require('./queries/userQueries');
 const bankQueries = require('./queries/bankQueries');
 const ratingQueries = require('./queries/ratingQueries');
 const { TRANSACTION_OPERATION_TYPES } = require('../constants');
+const ServerError = require('../errors/ServerError');
 
 module.exports.login = async (req, res, next) => {
   try {
@@ -224,22 +225,17 @@ module.exports.cashout = async (req, res, next) => {
     );
     await bankQueries.updateBankBalance(
       {
-        balance: bd.sequelize.literal(`CASE 
-                WHEN "cardNumber"='${req.body.number.replace(
-                  / /g,
-                  ''
-                )}' AND "expiry"='${req.body.expiry}' AND "cvc"='${
-          req.body.cvc
-        }'
-                    THEN "balance"+${req.body.sum}
-                WHEN "cardNumber"='${
-                  CONSTANTS.SQUADHELP_BANK_NUMBER
-                }' AND "expiry"='${
-          CONSTANTS.SQUADHELP_BANK_EXPIRY
-        }' AND "cvc"='${CONSTANTS.SQUADHELP_BANK_CVC}'
-                    THEN "balance"-${req.body.sum}
-                 END
-                `),
+        balance: bd.sequelize.literal(`
+          CASE 
+            WHEN "cardNumber"='${req.body.number.replace(/ /g, '')}' 
+              AND "expiry"='${req.body.expiry}' AND "cvc"='${req.body.cvc}'
+                THEN "balance"+${req.body.sum}
+            WHEN "cardNumber"='${CONSTANTS.SQUADHELP_BANK_NUMBER}' 
+              AND "expiry"='${CONSTANTS.SQUADHELP_BANK_EXPIRY}' 
+              AND "cvc"='${CONSTANTS.SQUADHELP_BANK_CVC}'
+                THEN "balance"-${req.body.sum}
+          END
+        `),
       },
       {
         cardNumber: {
@@ -251,10 +247,35 @@ module.exports.cashout = async (req, res, next) => {
       },
       transaction
     );
+
+    const newTransactionInfo = {
+      operationType: TRANSACTION_OPERATION_TYPES.INCOME,
+      amount: req.body.sum,
+      userId: req.tokenData.userId,
+    };
+    await bd.Transactions.create(newTransactionInfo, { transaction });
+
     transaction.commit();
     res.send({ balance: updatedUser.balance });
   } catch (err) {
     transaction.rollback();
     next(err);
+  }
+};
+
+module.exports.getUserTransactions = async (req, res, next) => {
+  const {
+    tokenData: { userId },
+  } = req;
+  try {
+    const foundTransactions = await bd.Transactions.findAll({
+      where: { userId },
+      raw: true,
+      attributes: { exclude: ['updatedAt', 'userId'] },
+      //пагинация
+    });
+    res.status(200).send(foundTransactions);
+  } catch (err) {
+    next(new ServerError());
   }
 };

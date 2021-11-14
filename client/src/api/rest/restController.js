@@ -53,11 +53,11 @@ export const getActiveContests = data =>
 export const getContestById = ({ contestId }) =>
   http.get(`/contests/${contestId}`);
 
-const transactions = [
-  { id: 1, date: '2021-08-31', operationType: 'INCOME', amount: 10 },
-  { id: 2, date: '2021-09-01', operationType: 'INCOME', amount: 20 },
-  { id: 3, date: '2021-09-04', operationType: 'INCOME', amount: 40 },
-];
+// const transactions = [
+//   { id: 1, date: '2021-08-31', operationType: 'INCOME', amount: 10 },
+//   { id: 2, date: '2021-09-01', operationType: 'INCOME', amount: 20 },
+//   { id: 3, date: '2021-09-04', operationType: 'INCOME', amount: 40 },
+// ];
 
-export const getTransactions = () =>
-  Promise.resolve({ data: [...transactions] });
+export const getTransactions = () => http.get('/transactions');
+// Promise.resolve({ data: [...transactions] });

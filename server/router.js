@@ -33,6 +33,12 @@ router.use('/contests', contestRouter);
 // userRouter
 router.post('/getUser', checkToken.checkAuth);
 
+router.get(
+  '/transactions',
+  checkToken.checkToken,
+  userController.getUserTransactions
+);
+
 router.post(
   '/changeMark',
   checkToken.checkToken,
